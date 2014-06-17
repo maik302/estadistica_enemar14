@@ -114,7 +114,7 @@ intervalo_conf_simple = function(variable,confianza) {
 # Retorna:
 # El intervalo de confianza para la diferencia de medias de 'var1' y 'var2' con
 # un nivel de confianza del 'confianza'%.
-intervalo_conf_diffMedias = function(var1, var2, confianza) {
+intervalo_conf_diff = function(var1, var2, confianza) {
     n1 = length(var1)
     n2 = length(var2)
     cuantil = qt((1-confianza)/2,(n1+n2-2))
@@ -165,33 +165,6 @@ intervalo_conf_cociente = function(var1, var2, confianza) {
     return (c(vdiv,lim_inf,lim_sup))
 }
 
-# Intervalo de Confianza para Diferencia de proporciones muestrales.
-# 
-# Argumentos:
-# var1 : Vector con los valores de una muestra aleatoria.
-# var2 : Vector con los valores de una muestra aleatoria.
-# confianza : Nivel de confianza con el que se estimará el intervalo.
-#
-# Retorna:
-# El intervalo de confianza para la diferencia de proporciones de 'var1' 
-# y 'var2' con un nivel de confianza del 'confianza'%.
-intervalo_conf_diffProporciones = function(var1,var2,confianza)
-{
-    n1 = length(var1[,1])
-    n2 = length(var2[,1])
-    alpha = 1-confianza
-    z.alphamedio = qnorm(1-alpha/2)
-    mujeres1 = which(var1[,1] > 3)
-    mujeres2 = which(var2[,1] > 3)
-    P1 = length(mujeres1)/n1
-    P2 = length(mujeres2)/n2
-
-    lim_inf = (P1 - P2 - (z.alphamedio*(sqrt((P1*(1-P1)/n1)+(P2*(1-P2)/n2)))))
-    lim_sup = (P1 - P2 + (z.alphamedio*(sqrt((P1*(1-P1)/n1)+(P2*(1-P2)/n2)))))
-
-    return (c(lim_inf,lim_sup))
-}
-
 # Operaciones para resolver la pregunta 3 del Proyecto 1
 #
 # Argumentos:
@@ -219,6 +192,7 @@ pregunta3 = function(operarios,nMuestras,tamMuestras,significancia) {
         mAleatoria = sample(mTotal,tamMuestras)
         propmAleatoria = length(which(mAleatoria == 1))/length(mAleatoria)
         icoff = intervalo_conf_prop(mAleatoria,propmAleatoria,significancia)
+        print(icoff)
 
         if (propMujeres >= icoff[1] && propMujeres <= icoff[2]) {
             contador = contador+1
@@ -259,7 +233,7 @@ zulHijos = read.table("numhijos/zulmus_5.txt")
 # utilizo una significacion de 90%.
 
 #intervalo_conf_cociente(texasLif[,2],texasLif[,3],0.99)
-#inCoeff = intervalo_conf_diffMedias(texasLif[,2],texasLif[,3],0.90)
+#inCoeff = intervalo_conf_diff(texasLif[,2],texasLif[,3],0.90)
 #if (inCoeff[1] > 0) {
 #    cat("\nLa media del tamaño de tierras dedicadas a la actividad agrícola",
 #        " en el año 2007 es mayor a la del año 2002.\n")
@@ -270,9 +244,7 @@ zulHijos = read.table("numhijos/zulmus_5.txt")
 
 #--- Pregunta 3 ---#
 
-cat("\nPorcentaje de veces en que la proporción real de mujeres pertenece")
-cat(" a los 100 intervalos aleatorios de tamaño 30.\n")
-print(pregunta3(operariosNebraska,100,30,0.12))
+Holis = pregunta3(operariosNebraska,100,30,0.12)
 
 #--- Pregunta 4 ---#
 
@@ -293,21 +265,15 @@ print(pregunta3(operariosNebraska,100,30,0.12))
 #cat("\n\t\tEstado Zulia\n")
 #print(zul)
 
-# Intervalo de Confianza para el estado Aragua y Zulia
-#cat("\n\tIntervalo de Confianza para el estado Aragua y Zulia\n")
-#print(intervalo_conf_diffProporciones(araHijos,zulHijos,0.88))
-# Intervalo de Confianza para el estado Aragua y Distrito Capital
-#cat("\n\tIntervalo de Confianza para el estrado Aragua y el Distrito Capital\n")
-#print(intervalo_conf_diffProporciones(araHijos,dcHijos,0.88))
-# Intervalo de Confianza para el estado Aragua y Miranda
-#cat("\n\tIntervalo de Confianza para el estado Aragua y Miranda\n")
-#print(intervalo_conf_diffProporciones(araHijos,mirHijos,0.88))
-# Intervalo de Confianza para el estado Zulia y Distrito Capital
-#cat("\n\tIntervalo de Confianza para el estado Zulia y el Distrito Capital\n")
-#print(intervalo_conf_diffProporciones(zulHijos,dcHijos,0.88))
-# Intervalo de Confianza para el estado Zulia y Miranda
-#cat("\n\tIntervalo de Confianza para el estado Zulia y Miranda\n")
-#print(intervalo_conf_diffProporciones(zulHijos,mirHijos,0.88))
-# Intervalo de Confianza para el estado Miranda y el Distrito Capital
-#cat("\n\tIntervalo de COnfianza para el estado Miranda y el Distrito Capital\n")
-#print(intervalo_conf_diffProporciones(mirHijos,dcHijos,0.88))
+# Intervalo de Confianza para el estado Aragua
+cat("\n\tIntervalo de Confianza para el estado Aragua\n")
+print(intervalo_conf_prop(araHijos[,1],3,0.88))
+# Intervalo de Confianza para el Distrito Capital
+cat("\n\tIntervalo de Confianza para el Distrito Capital\n")
+print(intervalo_conf_prop(dcHijos[,1],3,0.88))
+# Intervalo de Confianza para el estado Miranda
+cat("\n\tIntervalo de Confianza para el estado Miranda\n")
+print(intervalo_conf_prop(mirHijos[,1],3,0.88))
+# Intervalo de Confianza para el estado Zulia
+cat("\n\tIntervalo de Confianza para el estado Zulia\n")
+print(intervalo_conf_prop(zulHijos[,1],3,0.88))
